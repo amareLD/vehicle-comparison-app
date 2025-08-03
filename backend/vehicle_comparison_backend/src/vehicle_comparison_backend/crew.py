@@ -2,6 +2,11 @@ from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
+# from vehicle_comparison_backend.tools.web_scraper import WebScraperTool, SriLankanCarSearchTool
+# from vehicle_comparison_backend.tools.vehicle_comparison import VehicleComparisonTool
+# from vehicle_comparison_backend.tools.vehicle_search import VehicleSearchTool
+from vehicle_comparison_backend.tools.web_scraper import WebScraperTool, SriLankanCarSearchTool
+
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
@@ -20,45 +25,57 @@ class VehicleComparisonBackend():
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
-    def researcher(self) -> Agent:
+    def vehicle_comparison_agent(self) -> Agent:
         return Agent(
-            config=self.agents_config['researcher'], # type: ignore[index]
+            config=self.agents_config['vehicle_comparison_agent'],
+            tools=[WebScraperTool()],
             verbose=True
         )
 
     @agent
-    def reporting_analyst(self) -> Agent:
+    def sri_lankan_ad_finder_agent(self) -> Agent:
         return Agent(
-            config=self.agents_config['reporting_analyst'], # type: ignore[index]
+            config=self.agents_config['sri_lankan_ad_finder_agent'],
+            tools=[SriLankanCarSearchTool()],
             verbose=True
         )
 
-    # To learn more about structured task outputs,
-    # task dependencies, and task callbacks, check out the documentation:
-    # https://docs.crewai.com/concepts/tasks#overview-of-a-task
-    @task
-    def research_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['research_task'], # type: ignore[index]
+    @agent
+    def ad_details_extractor_agent(self) -> Agent:
+        return Agent(
+            config=self.agents_config['ad_details_extractor_agent'],
+            tools=[WebScraperTool()],
+            verbose=True
         )
 
     @task
-    def reporting_task(self) -> Task:
+    def vehicle_comparison_task(self) -> Task:
         return Task(
-            config=self.tasks_config['reporting_task'], # type: ignore[index]
-            output_file='report.md'
+            config=self.tasks_config['vehicle_comparison_task'],
+            agent=self.vehicle_comparison_agent()
+        )
+
+    @task
+    def sri_lankan_ad_finder_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['sri_lankan_ad_finder_task'],
+            agent=self.sri_lankan_ad_finder_agent()
+        )
+
+    @task
+    def ad_details_extraction_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['ad_details_extraction_task'],
+            agent=self.ad_details_extractor_agent(),
+            context=[self.sri_lankan_ad_finder_task()]
         )
 
     @crew
     def crew(self) -> Crew:
-        """Creates the VehicleComparisonBackend crew"""
-        # To learn how to add knowledge sources to your crew, check out the documentation:
-        # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
-
+        """Creates the Vehicleanalyst crew"""
         return Crew(
-            agents=self.agents, # Automatically created by the @agent decorator
-            tasks=self.tasks, # Automatically created by the @task decorator
+            agents=self.agents(),
+            tasks=self.tasks(),
             process=Process.sequential,
-            verbose=True,
-            # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
+            verbose=2,
         )

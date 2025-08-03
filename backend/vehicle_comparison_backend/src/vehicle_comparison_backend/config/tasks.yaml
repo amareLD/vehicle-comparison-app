@@ -1,17 +1,45 @@
-research_task:
+vehicle_comparison_task:
   description: >
-    Conduct a thorough research about {topic}
-    Make sure you find any interesting and relevant information given
-    the current year is {current_year}.
+    Research and compare two vehicles: {vehicle1} and {vehicle2}.
+    Find detailed information including:
+    - Technical specifications (engine, fuel economy, dimensions)
+    - Expert reviews and ratings
+    - Common problems and reliability issues
+    - Price ranges in the market
+    - Pros and cons for each vehicle
+    Create a comprehensive side-by-side comparison.
   expected_output: >
-    A list with 10 bullet points of the most relevant information about {topic}
-  agent: researcher
+    A detailed comparison report in structured format containing specifications, 
+    expert opinions, pros/cons, and recommendations for both vehicles.
+  agent: vehicle_comparison_agent
 
-reporting_task:
+sri_lankan_ad_finder_task:
   description: >
-    Review the context you got and expand each topic into a full section for a report.
-    Make sure the report is detailed and contains any and all relevant information.
+    Search for current vehicle advertisements for {vehicle1} and {vehicle2} on Sri Lankan websites.
+    Focus on these platforms:
+    - ikman.lk/en/ads/sri-lanka/cars
+    - riyasewana.com
+    - patpat.lk/vehicle
+    Find at least 5-10 relevant listings for each vehicle if available.
   expected_output: >
-    A fully fledged report with the main topics, each with a full section of information.
-    Formatted as markdown without '```'
-  agent: reporting_analyst
+    A list of URLs for vehicle advertisements found on Sri Lankan automotive websites, 
+    organized by vehicle model.
+  agent: sri_lankan_ad_finder_agent
+
+ad_details_extraction_task:
+  description: >
+    Extract detailed information from the vehicle advertisement URLs provided by the previous task.
+    For each URL, extract:
+    - Vehicle title/model
+    - Price (in LKR)
+    - Year of manufacture
+    - Mileage (in km)
+    - Location
+    - Contact information
+    - Any additional relevant details
+  expected_output: >
+    A structured JSON list containing extracted details for each advertisement, 
+    with proper formatting and validation of extracted data.
+  agent: ad_details_extractor_agent
+  context:
+    - sri_lankan_ad_finder_task

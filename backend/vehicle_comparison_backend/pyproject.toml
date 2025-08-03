@@ -5,7 +5,14 @@ description = "vehicle-comparison-backend using crewAI"
 authors = [{ name = "Your Name", email = "you@example.com" }]
 requires-python = ">=3.10,<3.14"
 dependencies = [
-    "crewai[tools]>=0.152.0,<1.0.0"
+    "beautifulsoup4>=4.13.4",
+    "crewai[tools]>=0.152.0,<1.0.0",
+    "fastapi>=0.116.1",
+    "python-multipart>=0.0.20",
+    "requests>=2.32.4",
+    "selenium>=4.34.2",
+    "uvicorn>=0.35.0",
+    "webdriver-manager>=4.0.2",
 ]
 
 [project.scripts]
@@ -14,6 +21,7 @@ run_crew = "vehicle_comparison_backend.main:run"
 train = "vehicle_comparison_backend.main:train"
 replay = "vehicle_comparison_backend.main:replay"
 test = "vehicle_comparison_backend.main:test"
+api = "vehicle_comparison_backend.api:app"
 
 [build-system]
 requires = ["hatchling"]
