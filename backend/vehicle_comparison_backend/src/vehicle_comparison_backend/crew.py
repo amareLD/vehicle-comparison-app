@@ -15,8 +15,8 @@ from vehicle_comparison_backend.tools.web_scraper import WebScraperTool, SriLank
 class VehicleComparisonBackend():
     """VehicleComparisonBackend crew"""
 
-    agents: List[BaseAgent]
-    tasks: List[Task]
+    agents_config = 'config/agents.yaml'
+    tasks_config = 'config/tasks.yaml'
 
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
